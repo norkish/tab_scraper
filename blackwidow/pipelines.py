@@ -13,7 +13,7 @@ class BlackwidowPipeline(object):
 
     def process_item(self, item, spider):
 
-        with io.open('output/' + item.provider +'/' + item.filename() + '.out', 'w', encoding='utf8') as outputfile:
+        with io.open('output/' + item['provider'] +'/' + item.filename() + '.out', 'w', encoding='utf8') as outputfile:
             output = item.encodeTab()
             outputfile.write(output)
             outputfile.close()
