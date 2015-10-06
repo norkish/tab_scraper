@@ -29,7 +29,7 @@ class EchordsSpider(scrapy.Spider):
         for item in response.css('.lista'):
             title = item.css('p a::text').extract_first()
             if len(response.css(".types")) > 0:
-                for href in response.css(".types a:not(.tu)::attr(href)").extract():
+                for href in response.css(".types a:not(.tu):not(.tb2):not(.td2):not(.tf2):not(.tt2):not(.th2):not(.ti2)::attr(href)").extract():
                     absoluteUrl = response.urljoin(href)
                     req = scrapy.Request(absoluteUrl, callback=self.parse_tab)
 
