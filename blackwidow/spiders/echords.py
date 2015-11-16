@@ -4,19 +4,21 @@ from blackwidow.items import TabItem
 from string import ascii_lowercase
 
 class EchordsSpider(scrapy.Spider):
-    name = "echords"
-    allowed_domains = ["e-chords.com"]
+    name = "azlyrics"
+    allowed_domains = ["azlyrics.com"]
+    custom_settings = {
+        'USER_AGENT' : 'User-Agent: Mozilla/5.0 (X11; Ubuntu; Linux x86_64; rv:31.0) Gecko/20100101 Firefox/31.0'
+    }
     start_urls = [
-        # A manual list of urls to start parsing from
-        'http://www.e-chords.com/browse/[0-9]'
-    ] + [
-
         # Add all of the letters a-z to the list of urls to start
-        'http://www.e-chords.com/browse/' + c for c in ascii_lowercase
+        str('http://www.azlyrics.com/' + c + '/') for c in ascii_lowercase
     ]
 
     def parse(self, response):
-        for link in response.css('.pages p a'):
+        
+        print response
+
+        for link in response.css('.main-page .row a'):
             absoluteUrl = response.urljoin(link.xpath('./@href').extract_first())
             req = scrapy.Request(absoluteUrl, callback=self.parse_artist)
 
@@ -26,19 +28,24 @@ class EchordsSpider(scrapy.Spider):
             yield req
 
     def parse_artist(self, response):
-        for item in response.css('.lista'):
-            title = item.css('p a::text').extract_first()
-            if len(response.css(".types")) > 0:
-                for href in response.css(".types a:not(.tu):not(.tb2):not(.td2):not(.tf2):not(.tt2):not(.th2):not(.ti2)::attr(href)").extract():
-                    absoluteUrl = response.urljoin(href)
-                    req = scrapy.Request(absoluteUrl, callback=self.parse_tab)
+        for item in response.css('.listAlbum .album, .listAlbum a'):
+            if item.xpath('self::attr(class)').extract() == 'album':
+                currentAlbum = item.extract_first()
 
-                    req.meta['artist'] = response.meta['artist']
-                    req.meta['title'] = title
+            console.log(currentAlbum)
 
-                    yield req
-            else:
-                print('No types : ', absoluteUrl)
+            # title = item.css('p a::text').extract_first()
+            # if len(response.css(".types")) > 0:
+            #     for href in response.css(".types a:not(.tu):not(.tb2):not(.td2):not(.tf2):not(.tt2):not(.th2):not(.ti2)::attr(href)").extract():
+            #         absoluteUrl = response.urljoin(href)
+            #         req = scrapy.Request(absoluteUrl, callback=self.parse_tab)
+
+            #         req.meta['artist'] = response.meta['artist']
+            #         req.meta['title'] = title
+
+            #         yield req
+            # else:
+            #     print('No types : ', absoluteUrl)
 
     def parse_tab(self, response):
 
