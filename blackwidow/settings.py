@@ -1,5 +1,4 @@
 # -*- coding: utf-8 -*-
-
 # Scrapy settings for blackwidow-project project
 #
 # For simplicity, this file contains only settings considered important or
@@ -14,6 +13,8 @@ BOT_NAME = 'blackwidow'
 SPIDER_MODULES = ['blackwidow.spiders']
 NEWSPIDER_MODULE = 'blackwidow.spiders'
 
+USER_AGENT = 'Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/36.0.1985.125 Safari/537.36'
+COOKIES_ENABLED = False
 
 # Crawl responsibly by identifying yourself (and your website) on the user-agent
 #USER_AGENT = 'blackwidow-project (+http://www.yourdomain.com)'
@@ -61,9 +62,9 @@ CONCURRENT_REQUESTS_PER_DOMAIN=5
 
 # Configure item pipelines
 # See http://scrapy.readthedocs.org/en/latest/topics/item-pipeline.html
-ITEM_PIPELINES = {
-   'blackwidow.pipelines.BlackwidowPipeline': 300,
-}
+# ITEM_PIPELINES = {
+#    'blackwidow.pipelines.BlackwidowPipeline': 300,
+# }
 
 # Enable and configure the AutoThrottle extension (disabled by default)
 # See http://doc.scrapy.org/en/latest/topics/autothrottle.html

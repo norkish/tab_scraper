@@ -2,58 +2,56 @@
 import scrapy
 from blackwidow.items import TabItem
 from string import ascii_lowercase
+import time
 
 class EchordsSpider(scrapy.Spider):
-    name = "azlyrics"
-    allowed_domains = ["azlyrics.com"]
-    custom_settings = {
-        'USER_AGENT' : 'User-Agent: Mozilla/5.0 (X11; Ubuntu; Linux x86_64; rv:31.0) Gecko/20100101 Firefox/31.0'
-    }
-    start_urls = [
-        # Add all of the letters a-z to the list of urls to start
-        str('http://www.azlyrics.com/' + c + '/') for c in ascii_lowercase
-    ]
+    name = "echords"
+    allowed_domains = ["e-chords.com"]
+    # start_urls = [
+    #     # A manual list of urls to start parsing from
+    #     'http://www.e-chords.com/browse/[0-9]'
+    # ] + [
+
+    #     # Add all of the letters a-z to the list of urls to start
+    #     'http://www.e-chords.com/browse/' + c for c in ascii_lowercase
+    # ]
+
+    start_urls = ['http://www.e-chords.com/browse/t']
 
     def parse(self, response):
-        
-        print response
-
-        for link in response.css('.main-page .row a'):
+        for link in response.css('.pages p a'):
             absoluteUrl = response.urljoin(link.xpath('./@href').extract_first())
+    
             req = scrapy.Request(absoluteUrl, callback=self.parse_artist)
 
             req.meta['artist'] = link.xpath('./text()').extract_first()
             #req.meta['country'] = link.xpath('')
 
+            
             yield req
 
     def parse_artist(self, response):
-        for item in response.css('.listAlbum .album, .listAlbum a'):
-            if item.xpath('self::attr(class)').extract() == 'album':
-                currentAlbum = item.extract_first()
+        for item in response.css('.lista'):
+            title = item.css('p a::text').extract_first()
+            if len(response.css(".types")) > 0:
+                for href in response.css(".types a:not(.tu):not(.tb2):not(.td2):not(.tf2):not(.tt2):not(.th2):not(.ti2)::attr(href)").extract():
+                    absoluteUrl = response.urljoin(href)
+                    req = scrapy.Request(absoluteUrl, callback=self.parse_tab)
 
-            console.log(currentAlbum)
+                    req.meta['artist'] = response.meta['artist']
+                    req.meta['title'] = title
 
-            # title = item.css('p a::text').extract_first()
-            # if len(response.css(".types")) > 0:
-            #     for href in response.css(".types a:not(.tu):not(.tb2):not(.td2):not(.tf2):not(.tt2):not(.th2):not(.ti2)::attr(href)").extract():
-            #         absoluteUrl = response.urljoin(href)
-            #         req = scrapy.Request(absoluteUrl, callback=self.parse_tab)
-
-            #         req.meta['artist'] = response.meta['artist']
-            #         req.meta['title'] = title
-
-            #         yield req
-            # else:
-            #     print('No types : ', absoluteUrl)
+                    yield req
+            else:
+                print('No types : ', absoluteUrl)
 
     def parse_tab(self, response):
 
         item = TabItem()
         item['title'] = response.xpath("//h1/text()[normalize-space()]").extract_first()
-        item['artist'] = response.xpath("//h2[@id='artistname']/a/text()").extract_first()
-        item['raw_html'] = response.body
-        item['raw_tab'] = ''.join(response.xpath("//pre[@class='core']/node()").extract())
+        #item['artist'] = response.xpath("//h2[@id='artistname']/a/text()").extract_first()
+        #item['raw_html'] = response.body
+        item['raw_tab'] = ''.join(response.xpath("//div[@class='coremain']/pre[@class='core']/node()").extract())
         item['contributor'] = response.xpath("//div[@class='topo_cifra']/p[contains(., 'by')]/a/text()").extract_first()
         item['difficulty'] = response.xpath("//*[contains(., 'Difficulty')]/span/text()").extract_first()
         item['type'] = response.xpath("//div[@class='subopcoes']/span[@class='aba_active']/text()").extract_first()
