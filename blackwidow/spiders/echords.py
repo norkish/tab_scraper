@@ -6,17 +6,19 @@ import time
 
 class EchordsSpider(scrapy.Spider):
     name = "echords"
+    custom_settings = {
+        'FEED_URI' : './output/echords.csv',
+        'FEED_FORMAT' : 'CSV'
+    }
     allowed_domains = ["e-chords.com"]
-    # start_urls = [
-    #     # A manual list of urls to start parsing from
-    #     'http://www.e-chords.com/browse/[0-9]'
-    # ] + [
+    start_urls = [
+        # A manual list of urls to start parsing from
+        'http://www.e-chords.com/browse/[0-9]'
+    ] + [
 
-    #     # Add all of the letters a-z to the list of urls to start
-    #     'http://www.e-chords.com/browse/' + c for c in ascii_lowercase
-    # ]
-
-    start_urls = ['http://www.e-chords.com/browse/t']
+        # Add all of the letters a-z to the list of urls to start
+        'http://www.e-chords.com/browse/' + c for c in ascii_lowercase
+    ]
 
     def parse(self, response):
         for link in response.css('.pages p a'):

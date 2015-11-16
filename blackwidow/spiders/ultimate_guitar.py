@@ -4,6 +4,10 @@ from blackwidow.items import TabItem
 from string import ascii_lowercase
 
 class UltimateGuitarSpider(scrapy.Spider):
+    custom_settings = {
+        'FEED_URI' : './output/ultimate-guitar.csv',
+        'FEED_FORMAT' : 'CSV'
+    }
     name = "ultimate-guitar"
     allowed_domains = ["ultimate-guitar.com"]
     start_urls = [

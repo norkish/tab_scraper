@@ -1,12 +1,16 @@
 import re
 import scrapy
-from scrapy.linkextractors import LinkExtractor
-from scrapy.spiders import CrawlSpider, Rule
+from scrapy.contrib.linkextractors import LinkExtractor
+from scrapy.contrib.spiders import CrawlSpider, Rule
 
 from ..items import Song
 
 class AzlyricsSpider(CrawlSpider):
   name = 'azlyrics'
+  custom_settings = {
+        'FEED_URI' : './output/azlyrics.csv',
+        'FEED_FORMAT' : 'CSV'
+    }
   allowed_domains = ['azlyrics.com']
   start_urls = ['http://www.azlyrics.com']
   rules = [

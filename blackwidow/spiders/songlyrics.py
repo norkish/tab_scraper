@@ -1,13 +1,17 @@
 import re
 
 import scrapy
-from scrapy.linkextractors import LinkExtractor
-from scrapy.spiders import CrawlSpider, Rule
+from scrapy.contrib.linkextractors import LinkExtractor
+from scrapy.contrib.spiders import CrawlSpider, Rule
 
 from ..items import Song
 
 class SonglyricsSpider(CrawlSpider):
   name = 'songlyrics'
+  custom_settings = {
+        'FEED_URI' : './output/songlyrics.csv',
+        'FEED_FORMAT' : 'CSV'
+    }
   allowed_domains = ['songlyrics.com']
   start_urls = ['http://www.songlyrics.com/']
   rules = [

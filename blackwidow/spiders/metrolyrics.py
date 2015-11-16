@@ -1,13 +1,17 @@
 import re
 
 import scrapy
-from scrapy.linkextractors import LinkExtractor
-from scrapy.spiders import CrawlSpider, Rule
+from scrapy.contrib.linkextractors import LinkExtractor
+from scrapy.contrib.spiders import CrawlSpider, Rule
 
 from ..items import Song
 
 class MetroSpider(CrawlSpider):
   name = 'metrolyrics'
+  custom_settings = {
+        'FEED_URI' : './output/metrolyrics.csv',
+        'FEED_FORMAT' : 'CSV'
+    }
   allowed_domains = ['metrolyrics.com']
   start_urls = ['http://www.metrolyrics.com/artists-1.html']
   rules = [
