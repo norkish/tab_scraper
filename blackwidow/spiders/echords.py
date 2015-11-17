@@ -50,7 +50,7 @@ class EchordsSpider(scrapy.Spider):
     def parse_tab(self, response):
 
         item = TabItem()
-        item['title'] = response.xpath("//h1/text()[normalize-space()]").extract_first()
+        #item['title'] = response.xpath("//h1/text()[normalize-space()]").extract_first()
         #item['artist'] = response.xpath("//h2[@id='artistname']/a/text()").extract_first()
         #item['raw_html'] = response.body
         item['raw_tab'] = ''.join(response.xpath("//div[@class='coremain']/pre[@class='core']/node()").extract())
