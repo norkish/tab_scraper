@@ -22,7 +22,7 @@ class UltimateGuitarSpider(scrapy.Spider):
     # Parse the initial search page
     def parse(self, response):
         # Make a list of all artists on the page, and call parse_artist on them
-        for link in response.css("table.b3 + table a"):
+        for link in response.css('table.b3 + table a'):
             absoluteUrl = response.urljoin(link.xpath('./@href').extract_first())
 
             req = scrapy.Request(absoluteUrl, callback=self.parse_artist)
@@ -58,7 +58,7 @@ class UltimateGuitarSpider(scrapy.Spider):
 
             yield req
 
-        for href in response.css("table table table tr:nth-child(4) a.ys::attr('href')"):
+        for href in response.css("table table table a.ys::attr('href')"):
             absoluteUrl = response.urljoin(href.extract())
             req = scrapy.Request(absoluteUrl, callback=self.parse_artist)
             #req.meta['additional'] = True

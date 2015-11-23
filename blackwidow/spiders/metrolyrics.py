@@ -13,7 +13,7 @@ class MetroSpider(CrawlSpider):
         'FEED_FORMAT' : 'CSV'
     }
   allowed_domains = ['metrolyrics.com']
-  start_urls = ['http://www.metrolyrics.com/artists-1.html']
+  start_urls = ['http://www.metrolyrics.com']
   rules = [
     Rule(LinkExtractor(allow=(r'/artists-[a-z1](-\d+)?\.html',))),
     Rule(LinkExtractor(allow=(r'/[a-z-]+-(lyrics|overview|alpage-\d+)\.html',))),
