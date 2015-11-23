@@ -52,6 +52,8 @@ class EchordsSpider(scrapy.Spider):
         item = TabItem()
         item['title'] = response.meta['title']
         item['artist'] = response.meta['artist']
+        #item['title'] = response.xpath("//h1/text()[normalize-space()]").extract_first()
+        #item['artist'] = response.xpath("//h2[@id='artistname']/a/text()").extract_first()
         #item['raw_html'] = response.body
         item['raw_tab'] = ''.join(response.xpath("//div[@class='coremain']/pre[@class='core']/node()").extract())
         item['contributor'] = response.xpath("//div[@class='topo_cifra']/p[contains(., 'by')]/a/text()").extract_first()
