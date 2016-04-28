@@ -1,4 +1,5 @@
 # -*- coding: utf-8 -*-
+import HTMLParser
 import scrapy
 from blackwidow.items import TabItem
 from string import ascii_lowercase
@@ -12,12 +13,15 @@ class UltimateGuitarSpider(scrapy.Spider):
     allowed_domains = ["ultimate-guitar.com"]
     start_urls = [
         # A manual list of urls to start parsing from
-        'http://www.ultimate-guitar.com/bands/0-9.htm'
+        'http://www.ultimate-guitar.com/bands/m.htm'
+    ]
+    ''''http://www.ultimate-guitar.com/bands/0-9.htm'
                  ] + [
 
         # Add all of the letters a-z to the list of urls to start
         'http://www.ultimate-guitar.com/bands/' + c + '.htm' for c in ascii_lowercase
     ]
+    '''
 
     # Parse the initial search page
     def parse(self, response):
@@ -69,9 +73,16 @@ class UltimateGuitarSpider(scrapy.Spider):
 
         item = TabItem()
         #item['raw_html'] = response.body
-        item['raw_tab'] = ''.join(response.xpath("//pre[2]/node()").extract())
-        item['contributor'] = response.css('.t_dtd div::text').extract_first()
-        item['difficulty'] = response.css('.t_dtd div + div::text').extract_first()
+        item['raw_tab'] = HTMLParser.HTMLParser().unescape(''.join(response.xpath("//pre[2]/node()").extract()))
+        
+        labels = '\n'.join(response.css('.t_dt').xpath('.//text()').extract()).strip().lower().split()
+        values = '\n'.join(response.css('.t_dtd').xpath('.//text()').extract()).strip().split()
+
+        for label, value in zip(labels, values):
+            if label == 'difficulty':
+                item['difficulty'] = value
+            elif label == 'contributor':
+                item['contributor'] = value
         item['artist'] = response.meta['artist']
         item['rating'] = response.meta['rating']
         item['type'] = response.meta['type']

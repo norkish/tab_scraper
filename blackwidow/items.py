@@ -45,5 +45,5 @@ class Song(scrapy.Item):
     title = scrapy.Field()
     artist = scrapy.Field()
     lyrics = scrapy.Field()
-    match = scrapy.Field()
+    #match = scrapy.Field()
     provider = scrapy.Field()

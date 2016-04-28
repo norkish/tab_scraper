@@ -1,4 +1,5 @@
 # -*- coding: utf-8 -*-
+import HTMLParser
 import scrapy
 from blackwidow.items import TabItem
 from string import ascii_lowercase
@@ -26,9 +27,8 @@ class EchordsSpider(scrapy.Spider):
     
             req = scrapy.Request(absoluteUrl, callback=self.parse_artist)
 
-            req.meta['artist'] = link.xpath('./text()').extract_first()
+            req.meta['artist'] = link.xpath('.//text()').extract_first()
             #req.meta['country'] = link.xpath('')
-
             
             yield req
 
@@ -55,7 +55,7 @@ class EchordsSpider(scrapy.Spider):
         #item['title'] = response.xpath("//h1/text()[normalize-space()]").extract_first()
         #item['artist'] = response.xpath("//h2[@id='artistname']/a/text()").extract_first()
         #item['raw_html'] = response.body
-        item['raw_tab'] = ''.join(response.xpath("//div[@class='coremain']/pre[@class='core']/node()").extract())
+        item['raw_tab'] = HTMLParser.HTMLParser.unescape(''.join(response.xpath("//div[@class='coremain']/pre[@class='core']/node()").extract()))
         item['contributor'] = response.xpath("//div[@class='topo_cifra']/p[contains(., 'by')]/a/text()").extract_first()
         item['difficulty'] = response.xpath("//*[contains(., 'Difficulty')]/span/text()").extract_first()
         item['type'] = response.xpath("//div[@class='subopcoes']/span[@class='aba_active']/text()").extract_first()
