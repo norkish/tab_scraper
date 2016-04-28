@@ -10,9 +10,9 @@ from slugify import slugify
 
 class TabItem(scrapy.Item):
     title = scrapy.Field()
-    body = scrapy.Field()
+    #body = scrapy.Field()
     url = scrapy.Field()
-    raw_html = scrapy.Field()
+    #raw_html = scrapy.Field()
     raw_tab = scrapy.Field()
     contributor = scrapy.Field()
     difficulty = scrapy.Field()
@@ -21,7 +21,7 @@ class TabItem(scrapy.Item):
     type = scrapy.Field()
     comments = scrapy.Field()
     key = scrapy.Field()
-    youtube = scrapy.Field()
+    #youtube = scrapy.Field()
     provider = scrapy.Field()
 
     def filename(self):

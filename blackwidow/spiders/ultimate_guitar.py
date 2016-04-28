@@ -4,6 +4,8 @@ import scrapy
 from blackwidow.items import TabItem
 from string import ascii_lowercase
 
+parser = HTMLParser.HTMLParser()
+
 class UltimateGuitarSpider(scrapy.Spider):
     custom_settings = {
         'FEED_URI' : './output/ultimate-guitar.csv',
@@ -13,7 +15,7 @@ class UltimateGuitarSpider(scrapy.Spider):
     allowed_domains = ["ultimate-guitar.com"]
     start_urls = [
         # A manual list of urls to start parsing from
-	'http://www.ultimate-guitar.com/bands/0-9.htm'
+	    'http://www.ultimate-guitar.com/bands/0-9.htm'
                  ] + [
 
         # Add all of the letters a-z to the list of urls to start
@@ -70,7 +72,7 @@ class UltimateGuitarSpider(scrapy.Spider):
 
         item = TabItem()
         #item['raw_html'] = response.body
-        item['raw_tab'] = HTMLParser.HTMLParser().unescape(''.join(response.xpath("//pre[2]/node()").extract()))
+        item['raw_tab'] = parser.unescape(''.join(response.xpath("//pre[2]/node()").extract()))
         
         labels = '\n'.join(response.css('.t_dt').xpath('.//text()').extract()).strip().lower().split()
         values = '\n'.join(response.css('.t_dtd').xpath('.//text()').extract()).strip().split()
@@ -80,12 +82,12 @@ class UltimateGuitarSpider(scrapy.Spider):
                 item['difficulty'] = value
             elif label == 'contributor':
                 item['contributor'] = value
-        item['artist'] = response.meta['artist']
+        item['artist'] = parser.unescape(response.meta['artist'])
         item['rating'] = response.meta['rating']
         item['type'] = response.meta['type']
         item['url'] = response.url
-        item['comments'] = [comment.strip() for comment in response.css('.comment_content p').extract()]
+        item['comments'] = parser.unescape([comment.strip() for comment in response.css('.comment_content p').extract()])
         item['provider'] = 'ultimate-guitar'
-        item['title'] = response.meta['title']
+        item['title'] = parser.unescape(response.meta['title'])
 
         yield item

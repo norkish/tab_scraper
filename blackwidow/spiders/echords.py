@@ -5,6 +5,8 @@ from blackwidow.items import TabItem
 from string import ascii_lowercase
 import time
 
+parser = HTMLParser.HTMLParser()
+
 class EchordsSpider(scrapy.Spider):
     name = "echords"
     custom_settings = {
@@ -35,8 +37,8 @@ class EchordsSpider(scrapy.Spider):
     def parse_artist(self, response):
         for item in response.css('.lista'):
             title = item.css('p a::text').extract_first()
-            if len(response.css(".types")) > 0:
-                for href in response.css(".types a:not(.tu):not(.tb2):not(.td2):not(.tf2):not(.tt2):not(.th2):not(.ti2)::attr(href)").extract():
+            if len(item.css(".types")) > 0:
+                for href in item.css(".types a:not(.tu):not(.tb2):not(.td2):not(.tf2):not(.tt2):not(.th2):not(.ti2)::attr(href)").extract():
                     absoluteUrl = response.urljoin(href)
                     req = scrapy.Request(absoluteUrl, callback=self.parse_tab)
 
@@ -50,17 +52,26 @@ class EchordsSpider(scrapy.Spider):
     def parse_tab(self, response):
 
         item = TabItem()
-        item['title'] = response.meta['title']
-        item['artist'] = response.meta['artist']
+        item['title'] = parser.unescape(response.meta['title'])
+        item['artist'] = parser.unescape(response.meta['artist'])
         #item['title'] = response.xpath("//h1/text()[normalize-space()]").extract_first()
         #item['artist'] = response.xpath("//h2[@id='artistname']/a/text()").extract_first()
         #item['raw_html'] = response.body
-        item['raw_tab'] = HTMLParser.HTMLParser().unescape(''.join(response.xpath("//div[@class='coremain']/pre[@class='core']/node()").extract()))
+        item['raw_tab'] = parser.unescape(''.join(response.xpath("//div[@class='coremain']/pre[@class='core']/node()").extract()))
         item['contributor'] = response.xpath("//div[@class='topo_cifra']/p[contains(., 'by')]/a/text()").extract_first()
+        if item['contributor'] == "":
+            pas = response.css(".topo_cifra p a").extract()
+            if len(pas) > 2:
+                item['contributor'] = pas[2]
         item['difficulty'] = response.xpath("//*[contains(., 'Difficulty')]/span/text()").extract_first()
+
         item['type'] = response.xpath("//div[@class='subopcoes']/span[@class='aba_active']/text()").extract_first()
-        item['url'] = response.url
+        if item['type'] == "":
+            item['type'] = response.css("h1 span").extract_first()
         item['key'] = response.xpath("//span[@class='actualkey']/text()").extract_first()
+        if item['key'] == "":
+            item['key'] = response.css(".actualkey").extract_first()
+        item['url'] = response.url
         item['provider'] = 'echords'
 
         yield item
