@@ -13,15 +13,12 @@ class UltimateGuitarSpider(scrapy.Spider):
     allowed_domains = ["ultimate-guitar.com"]
     start_urls = [
         # A manual list of urls to start parsing from
-        'http://www.ultimate-guitar.com/bands/m.htm'
-    ]
-    ''''http://www.ultimate-guitar.com/bands/0-9.htm'
+	'http://www.ultimate-guitar.com/bands/0-9.htm'
                  ] + [
 
         # Add all of the letters a-z to the list of urls to start
         'http://www.ultimate-guitar.com/bands/' + c + '.htm' for c in ascii_lowercase
     ]
-    '''
 
     # Parse the initial search page
     def parse(self, response):
