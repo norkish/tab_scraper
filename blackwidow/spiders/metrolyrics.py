@@ -16,8 +16,8 @@ class MetroSpider(CrawlSpider):
   start_urls = ['http://www.metrolyrics.com']
   rules = [
     Rule(LinkExtractor(allow=(r'/artists-[a-z1](-\d+)?\.html',))),
-    Rule(LinkExtractor(allow=(r'/[a-z-]+-(lyrics|overview|alpage-\d+)\.html',))),
-    Rule(LinkExtractor(allow=(r'/[a-z-]+-lyrics-[a-z-]+\.html',),
+    Rule(LinkExtractor(allow=(r'/[a-z0-9-]+-(lyrics|overview|alpage-\d+)\.html',))),
+    Rule(LinkExtractor(allow=(r'/[a-z0-9-]+-lyrics-[a-z0-9-]+\.html',),
                        deny=(r'/news-story-',)), callback='parse_song'),
   ]
 

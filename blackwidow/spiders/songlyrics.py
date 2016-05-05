@@ -13,12 +13,12 @@ class SonglyricsSpider(CrawlSpider):
         'FEED_FORMAT' : 'CSV'
     }
   allowed_domains = ['songlyrics.com']
-  start_urls = ['http://www.songlyrics.com/billy-joel-lyrics/']
+  start_urls = ['http://www.songlyrics.com/']
   rules = [
-    #Rule(LinkExtractor(allow=(r'/[a-z0]/(\d+)?',))),
-    Rule(LinkExtractor(allow=(r'/[a-z-]+/[a-z-]+-lyrics/',),
+    Rule(LinkExtractor(allow=(r'/[a-z0]/(\d+)?',))),
+    Rule(LinkExtractor(allow=(r'/[a-z0-9-]+/[a-z0-9-]+-lyrics/',),
                        deny=(r'/news/',)), callback='parse_song'),
-    #Rule(LinkExtractor(allow=(r'/[a-z-]+-lyrics/',))),
+    Rule(LinkExtractor(allow=(r'/[a-z0-9-]+-lyrics/',))),
   ]
 
   def parse_song(self, response):
