@@ -7,6 +7,8 @@ import time
 
 parser = HTMLParser.HTMLParser()
 
+validDiff = ['Intermediate','Expert','Advanced','nolevel','Beginner','Easy']
+
 class EchordsSpider(scrapy.Spider):
     name = "echords"
     custom_settings = {
@@ -63,7 +65,12 @@ class EchordsSpider(scrapy.Spider):
             pas = response.css(".topo_cifra p a").extract()
             if len(pas) > 2:
                 item['contributor'] = pas[2]
+
         item['difficulty'] = response.xpath("//*[contains(., 'Difficulty')]/span/text()").extract_first()
+	if item['difficulty'] not in validDiff:
+		item['difficulty'] = response.xpath("//div[@class='topo_cifra']/p[contains(., 'Difficulty')]/span/text()").extract_first()
+	if item['difficulty'] not in validDiff:
+                item['difficulty'] = response.css("p span").extract_first()
 
         item['type'] = response.xpath("//div[@class='subopcoes']/span[@class='aba_active']/text()").extract_first()
         if item['type'] == "":

@@ -74,19 +74,21 @@ class UltimateGuitarSpider(scrapy.Spider):
         #item['raw_html'] = response.body
         item['raw_tab'] = parser.unescape(''.join(response.xpath("//pre[2]/node()").extract()))
         
-        labels = '\n'.join(response.css('.t_dt').xpath('.//text()').extract()).strip().lower().split()
-        values = '\n'.join(response.css('.t_dtd').xpath('.//text()').extract()).strip().split()
+        labels = '\n'.join(response.css('.t_dt').xpath('.//text()').extract()).strip().lower().split('\n')
+        values = '\n'.join(response.css('.t_dtd').xpath('.//text()').extract()).strip().split('\n')
 
         for label, value in zip(labels, values):
+            label = label.strip()
+            value = value.strip()
             if label == 'difficulty':
                 item['difficulty'] = value
             elif label == 'contributor':
                 item['contributor'] = value
         item['artist'] = parser.unescape(response.meta['artist'])
-        item['rating'] = response.meta['rating']
+        #item['rating'] = response.meta['rating']
         item['type'] = response.meta['type']
         item['url'] = response.url
-        item['comments'] = parser.unescape([comment.strip() for comment in response.css('.comment_content p').extract()])
+        #item['comments'] = parser.unescape([comment.strip() for comment in response.css('.comment_content p').extract()])
         item['provider'] = 'ultimate-guitar'
         item['title'] = parser.unescape(response.meta['title'])
 
