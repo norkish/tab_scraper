@@ -19,22 +19,23 @@ class EchordsSpider(scrapy.Spider):
     start_urls = [
         # A manual list of urls to start parsing from
         'http://www.e-chords.com/browse/[0-9]'
-    ] + [
+    ]# + [
 
         # Add all of the letters a-z to the list of urls to start
-        'http://www.e-chords.com/browse/' + c for c in ascii_lowercase
-    ]
+        #'http://www.e-chords.com/browse/' + c for c in ascii_lowercase
+    #]
 
     def parse(self, response):
         for link in response.css('.pages p a'):
             absoluteUrl = response.urljoin(link.xpath('./@href').extract_first())
     
-            req = scrapy.Request(absoluteUrl, callback=self.parse_artist)
+	    if "14-bis" in absoluteUrl:
+		    req = scrapy.Request(absoluteUrl, callback=self.parse_artist)
 
-            req.meta['artist'] = link.xpath('.//text()').extract_first()
-            #req.meta['country'] = link.xpath('')
-            
-            yield req
+		    req.meta['artist'] = link.xpath('.//text()').extract_first()
+		    #req.meta['country'] = link.xpath('')
+		    
+		    yield req
 
     def parse_artist(self, response):
         for item in response.css('.lista'):

@@ -17,7 +17,7 @@ class UltimateGuitarSpider(scrapy.Spider):
         # A manual list of urls to start parsing from
 	    'http://www.ultimate-guitar.com/bands/0-9.htm'
                  ] + [
-
+	
         # Add all of the letters a-z to the list of urls to start
         'http://www.ultimate-guitar.com/bands/' + c + '.htm' for c in ascii_lowercase
     ]
@@ -27,16 +27,16 @@ class UltimateGuitarSpider(scrapy.Spider):
         # Make a list of all artists on the page, and call parse_artist on them
         for link in response.css('table.b3 + table a'):
             absoluteUrl = response.urljoin(link.xpath('./@href').extract_first())
+	    req = scrapy.Request(absoluteUrl, callback=self.parse_artist)
 
-            req = scrapy.Request(absoluteUrl, callback=self.parse_artist)
+	    # pass along some data to the next step
+	    req.meta['artist'] = link.xpath('./text()').extract_first()
 
-            # pass along some data to the next step
-            req.meta['artist'] = link.xpath('./text()').extract_first()
-
-            yield req
+	    yield req
 
         # Recursively call this function on all pagination links
         for href in response.css("table table table tr:nth-child(4) a.ys::attr('href')"):
+
             absoluteUrl = response.urljoin(href.extract())
 
             yield scrapy.Request(absoluteUrl, callback=self.parse)
@@ -77,13 +77,18 @@ class UltimateGuitarSpider(scrapy.Spider):
         labels = '\n'.join(response.css('.t_dt').xpath('.//text()').extract()).strip().lower().split('\n')
         values = '\n'.join(response.css('.t_dtd').xpath('.//text()').extract()).strip().split('\n')
 
+	values = [x.strip() for x in values]
+	labels = [x.strip() for x in labels]
+	values = filter(None,values)
+	labels = filter(None, labels)
+
         for label, value in zip(labels, values):
-            label = label.strip()
-            value = value.strip()
             if label == 'difficulty':
                 item['difficulty'] = value
             elif label == 'contributor':
                 item['contributor'] = value
+	    elif label == 'key':
+                item['key'] = value
         item['artist'] = parser.unescape(response.meta['artist'])
         #item['rating'] = response.meta['rating']
         item['type'] = response.meta['type']
