@@ -8,9 +8,9 @@ from blackwidow.spiders.ultimate_guitar import UltimateGuitarSpider
 
 
 process = CrawlerProcess()
-process.crawl(EchordsSpider)
+#process.crawl(EchordsSpider)
 process.crawl(LyricsnetSpider)
-process.crawl(MetroSpider)
-process.crawl(SonglyricsSpider)
-process.crawl(UltimateGuitarSpider)
+#process.crawl(MetroSpider)
+#process.crawl(SonglyricsSpider)
+#process.crawl(UltimateGuitarSpider)
 process.start() # the script will block here until all crawling jobs are finished
